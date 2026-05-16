@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  DGCViewController.swift
 //  DGCRTC
 //
 //  Created by admin on 06/03/2024.
@@ -21,4 +21,3 @@ class DGCViewController: UIViewController {
     }
 
 }
-

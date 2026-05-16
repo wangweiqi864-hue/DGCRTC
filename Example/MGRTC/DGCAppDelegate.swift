@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  DGCAppDelegate.swift
 //  DGCRTC
 //
 //  Created by admin on 06/03/2024.
@@ -43,4 +43,3 @@ class DGCAppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-

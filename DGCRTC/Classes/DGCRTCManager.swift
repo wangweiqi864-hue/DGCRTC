@@ -301,7 +301,7 @@ open class DGCRTCManager : NSObject {
         context?.refreshSDK(appID: dgc_rtcKey.appId, appKey: dgc_rtcKey.key)
     }
     
-    public func setAudioSessionOperationRestriction(restriction: MGAudioSessionOperationRestriction) {
+    public func setAudioSessionOperationRestriction(restriction: DGCAudioSessionOperationRestriction) {
         dgc_queue.async {
             RTCLog("setAudioSessionOperationRestriction=\(restriction)")
             self.context?.setAudioSessionOperationRestriction(restriction: restriction)

@@ -49,7 +49,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         MGLog.info("RTC---火山--刷新token==appID=\(appID)--appKey=\(appKey)--dgc_flag=\(dgc_flag)")
     }
     
-    func setAudioSessionOperationRestriction(restriction: MGAudioSessionOperationRestriction) {
+    func setAudioSessionOperationRestriction(restriction: DGCAudioSessionOperationRestriction) {
         self.dgc_rtcVideo?.setAudioScene(.highQualityChatRoom) // 火山人员建议这样使用
     }
     

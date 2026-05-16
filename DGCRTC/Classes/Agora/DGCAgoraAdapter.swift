@@ -10,7 +10,7 @@ import AgoraRtcKit
 import MGLog
 
 
-public enum MGAudioSessionOperationRestriction {
+public enum DGCAudioSessionOperationRestriction {
     case none // 无限制，SDK 完全控制音频会话操作。
     case setCategory // SDK不会改变音频会话类别
     case configureSession // SDK不会更改音频会话的任何设置（类别、模式、类别选项)
@@ -546,7 +546,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
     }
     
     // 设置sdk对 Audio Session 操作权限
-    func setAudioSessionOperationRestriction(restriction: MGAudioSessionOperationRestriction) {
+    func setAudioSessionOperationRestriction(restriction: DGCAudioSessionOperationRestriction) {
         
         var dgc_agoraOR: AgoraAudioSessionOperationRestriction = AgoraAudioSessionOperationRestriction.init(rawValue: 0)
         switch restriction {

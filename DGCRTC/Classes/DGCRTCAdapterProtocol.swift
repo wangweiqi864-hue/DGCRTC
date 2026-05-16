@@ -24,7 +24,7 @@ protocol DGCRTCAdapterProtocol : NSObjectProtocol  {
     func refreshSDK(appID : String,appKey : String)
     
     // 设置sdk对 Audio Session 操作权限
-    func setAudioSessionOperationRestriction(restriction: MGAudioSessionOperationRestriction)
+    func setAudioSessionOperationRestriction(restriction: DGCAudioSessionOperationRestriction)
     
     /// 是否可以发布流
     func enablePublish(isEnablePublish : Bool)
