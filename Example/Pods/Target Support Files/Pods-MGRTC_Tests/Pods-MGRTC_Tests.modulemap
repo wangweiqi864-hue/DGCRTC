@@ -1,0 +1,6 @@
+framework module Pods_DGCRTC_Tests {
+  umbrella header "Pods-DGCRTC_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

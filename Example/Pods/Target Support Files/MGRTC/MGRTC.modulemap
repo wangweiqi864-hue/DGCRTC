@@ -1,0 +1,6 @@
+framework module DGCRTC {
+  umbrella header "DGCRTC-umbrella.h"
+
+  export *
+  module * { export * }
+}

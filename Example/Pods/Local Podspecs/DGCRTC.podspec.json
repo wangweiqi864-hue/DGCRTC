@@ -1,0 +1,32 @@
+{
+  "name": "DGCRTC",
+  "version": "0.1.0",
+  "summary": "A short description of DGCRTC.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/admin/DGCRTC",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "admin": "huan.xin@renrengame.com"
+  },
+  "source": {
+    "git": "https://github.com/admin/DGCRTC.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": "DGCRTC/Classes/**/*",
+  "dependencies": {
+    "AgoraRtcEngine_Special_iOS": [
+      "4.3.2.15.JNH"
+    ],
+    "MGFileHandle": [],
+    "VolcEngineRTC": [
+      "3.58.2.400"
+    ],
+    "EffectCore": []
+  }
+}
