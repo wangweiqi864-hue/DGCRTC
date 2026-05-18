@@ -1,7 +1,7 @@
 import XCTest
 //import DGCRTC
 
-class Tests: XCTestCase {
+class DGCTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
