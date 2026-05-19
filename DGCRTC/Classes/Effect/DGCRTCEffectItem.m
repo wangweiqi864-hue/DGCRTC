@@ -30,7 +30,7 @@
     self = [super init];
     if (self) {
         self.type = type;
-        [self dgc_handle];
+        [self handle];
     }
     return self;
 }
@@ -45,7 +45,7 @@
 //#define be_styleQualityPath @"/palette/color" // 画质
 
 
--(void)dgc_handle{
+-(void)handle{
     self.displayRatio = 100;
     self.displayMin = 0;
     
@@ -234,9 +234,9 @@
             self.isBidirectional = YES;
             self.displayMin = -50;
             break;
-        case Switch: // 在cell中设置 MGBeautyFaceBottomBarListViewSwitchCell
+        case Switch: // 在cell中设置 DGCBeautyFaceBottomBarListViewSwitchCell
 //            imageName = "BeautyFace_Close"
-//            name = MGLocalizedString("已关闭")
+//            name = DGCLocalizedString("已关闭")
             break;
             
             // 风格装

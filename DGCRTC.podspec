@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DGCRTC'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'A short description of DGCRTC.'
 
 # This description is used to generate tags and improve search results.
@@ -40,7 +40,8 @@ TODO: Add long description of the pod here.
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'AgoraRtcEngine_Special_iOS', '4.3.2.15.JNH'
-  s.dependency 'MGFileHandle'
+  s.dependency 'DGCLog'
+  s.dependency 'DGCFileHandle'
   s.dependency 'VolcEngineRTC','3.58.2.400'
-  s.dependency 'EffectCore'
+  s.dependency 'DGCEffectCore'
 end

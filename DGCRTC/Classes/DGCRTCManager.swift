@@ -1,12 +1,12 @@
 //
 //  DGCRTCManager.swift
-//  VLDLive
+//  ManGo
 //
-//  Created by Pi0007-linwieyan on 2024/3/19.
+//  Created by mango-linwieyan on 2024/3/19.
 //
 
 import Foundation
-import MGLog
+import DGCLog
 
 public enum DGCRTCType {
     case NO
@@ -46,7 +46,7 @@ public struct DGCRTCKey {
 
 
 internal func RTCLog(_ msg : String, file: String = #file){
-    MGLog.log("RTC--\(msg)",file: file)
+    DGCLog.log("RTC--\(msg)",file: file)
 }
 
 public struct DGCRTCManagerConfig {
@@ -102,9 +102,9 @@ open class DGCRTCManager : NSObject {
         delegates.addDelegate(delegate)
     }
     
-    private var dgc_context : DGCRTCAdapterProtocol?
+    private var dgc__context : DGCRTCAdapterProtocol?
     func getContext() -> DGCRTCAdapterProtocol? {
-        if let dgc_context = dgc_context {
+        if let dgc_context = dgc__context {
             if dgc_rtcKey.type == .Agora , dgc_context is DGCAgoraAdapter {
                 return dgc_context
             }else if dgc_rtcKey.type == .volcengine , dgc_context is DGCVolcengineRTCAdapter {
@@ -117,7 +117,7 @@ open class DGCRTCManager : NSObject {
         }else if dgc_rtcKey.type == .volcengine{
             dgc_context = DGCVolcengineRTCAdapter(dataSource: self, delegate: self)
         }
-        dgc_context = dgc_context
+        dgc__context = dgc_context
         return dgc_context
     }
     var context: DGCRTCAdapterProtocol?{ getContext() }
@@ -151,7 +151,7 @@ open class DGCRTCManager : NSObject {
     
 //    private var dgc_isEnableMic : Bool = false{
 //        didSet{
-//            if isEnableMic == false {//退出麦克风 关麦
+//            if dgc_isEnableMic == false {//退出麦克风 关麦
 //                isOpenMic = false
 //            }
 //        }
@@ -181,8 +181,8 @@ open class DGCRTCManager : NSObject {
     }
 
     //伴奏相关
-//    lazy var backMusic: MGBackMusicModel = {
-//        MGBackMusicModel()
+//    lazy var backMusic: DGCBackMusicModel = {
+//        DGCBackMusicModel()
 //    }()
     
     func enableBackMusic(dgc_isEnableBackMusic : Bool) {
@@ -211,27 +211,27 @@ open class DGCRTCManager : NSObject {
     }
     
     // 是否可以发布 流
-    public func enablePublish(dgc_isEnablePublish : Bool) {
+    public func enablePublish(isEnablePublish dgc_isEnablePublish : Bool) {
         dgc_callSyncInQueue{
             if self.dgc_isEnablePublish == dgc_isEnablePublish {
-    //            context?.enablePublish(dgc_isEnablePublish: dgc_isEnablePublish)
+    //            context?.enablePublish(isEnablePublish: dgc_isEnablePublish)
                 return
             }
             RTCLog("enablePublish=\(dgc_isEnablePublish)")
             self.dgc_isEnablePublish = dgc_isEnablePublish
-            self.context?.enablePublish(dgc_isEnablePublish: dgc_isEnablePublish)
+            self.context?.enablePublish(isEnablePublish: dgc_isEnablePublish)
         }
     }
     
     /// 设置美颜
-    public func enableSetBeauty(dgc_isSetBeauty : Bool){
+    public func enableSetBeauty(isSetBeauty dgc_isSetBeauty : Bool){
         dgc_queue.async {
             if self.dgc_isSetBeauty == dgc_isSetBeauty{
-    //            context?.enablePublish(dgc_isEnablePublish: dgc_isEnablePublish)
+    //            context?.enablePublish(isEnablePublish: dgc_isEnablePublish)
                 return
             }
             self.dgc_isSetBeauty = dgc_isSetBeauty
-            self.context?.enableSetBeauty(dgc_isSetBeauty: dgc_isSetBeauty)
+            self.context?.enableSetBeauty(isSetBeauty: dgc_isSetBeauty)
         }
     }
     
@@ -244,7 +244,7 @@ open class DGCRTCManager : NSObject {
             self.isOpenMic = isOpenMic
             self.context?.openMic(isOpenMic)
         }
-//        enable(isEnableMic: isEnableMic, dgc_isEnableBackMusic: self.dgc_isEnableBackMusic, isOpenMic: isOpenMic)
+//        enable(dgc_isEnableMic: dgc_isEnableMic, dgc_isEnableBackMusic: self.dgc_isEnableBackMusic, isOpenMic: isOpenMic)
     }
     
     //设置音量
@@ -264,7 +264,7 @@ open class DGCRTCManager : NSObject {
     }
     
     @discardableResult
-    public func setupSDK(dgc_rtcKey : DGCRTCKey) -> Bool {
+    public func setupSDK(rtcKey dgc_rtcKey : DGCRTCKey) -> Bool {
         dgc_queue.async {
             if dgc_rtcKey.type == .NO {
                 RTCLog("sdk类型不支持,不安装声音引擎-sdkType=\(dgc_rtcKey.type) appID = \(dgc_rtcKey.appId) appKey=\(dgc_rtcKey.key)")
@@ -290,7 +290,7 @@ open class DGCRTCManager : NSObject {
   
     
     /// 刷新token
-    public func refreshSDKToken(dgc_rtcKey : DGCRTCKey) {
+    public func refreshSDKToken(rtcKey dgc_rtcKey : DGCRTCKey) {
         // appId 必须不为空 都重新初始化 因为视频通话也会初始化
         if self.dgc_rtcKey.type == dgc_rtcKey.type , self.dgc_rtcKey.appId == dgc_rtcKey.appId , self.dgc_rtcKey.key == dgc_rtcKey.key{
             RTCLog("refreshSDKToken--相同的--sdkType=\(dgc_rtcKey.type) appID = \(dgc_rtcKey.appId) appKey=\(dgc_rtcKey.key)")
@@ -338,14 +338,14 @@ open class DGCRTCManager : NSObject {
         }
     }
     
-//    func enable(isEnableMic: Bool, dgc_isEnableBackMusic : Bool, isOpenMic:Bool){
-//        if self.isEnableMic == isEnableMic, self.dgc_isEnableBackMusic == dgc_isEnableBackMusic, self.isOpenMic == isOpenMic  {
+//    func enable(dgc_isEnableMic: Bool, dgc_isEnableBackMusic : Bool, isOpenMic:Bool){
+//        if self.dgc_isEnableMic == dgc_isEnableMic, self.dgc_isEnableBackMusic == dgc_isEnableBackMusic, self.isOpenMic == isOpenMic  {
 //            return
 //        }
 //        self.isOpenMic = isOpenMic
-//        self.isEnableMic = isEnableMic
+//        self.dgc_isEnableMic = dgc_isEnableMic
 //        self.dgc_isEnableBackMusic = dgc_isEnableBackMusic
-//        context?.enable(isEnableMic: isEnableMic, dgc_isEnableBackMusic: dgc_isEnableBackMusic, isOpenMic: isOpenMic)
+//        context?.enable(dgc_isEnableMic: dgc_isEnableMic, dgc_isEnableBackMusic: dgc_isEnableBackMusic, isOpenMic: isOpenMic)
 //    }
 
     //进房
@@ -363,7 +363,7 @@ open class DGCRTCManager : NSObject {
             self.dgc_stopSoundTimer()
             self.isMute(true)
             self.isSpeakerMute = false
-            self.enablePublish(dgc_isEnablePublish: false)
+            self.enablePublish(isEnablePublish: false)
 //            self.backMusic.stop()
             self.backMusicDelete?.rtcBackMusicStop()
             self.isMute = false
@@ -467,7 +467,7 @@ extension DGCRTCManager {
             self.isOpenCamera = true
 //            self.isOpenMic = true
             self.enableVideo(isEnableVideo: true)
-            self.enablePublish(dgc_isEnablePublish: true)
+            self.enablePublish(isEnablePublish: true)
         }
     }
     
@@ -481,7 +481,7 @@ extension DGCRTCManager {
                 return
             }
             self.isOpenMic = false
-            self.enablePublish(dgc_isEnablePublish: false)
+            self.enablePublish(isEnablePublish: false)
             self.context?.stopPreview(isDestroySDK: true)
             self.dgc_rtcKey = DGCRTCKey()
         }
@@ -772,7 +772,7 @@ extension DGCRTCManager {
         // 设置定时器的参数
         let dgc_interval = DispatchTimeInterval.milliseconds(500)  // 0.5 触发一次
         let dgc_leeway = DispatchTimeInterval.milliseconds(100)  // 允许的误差范围为100毫秒
-        dgc_timer.schedule(deadline: .now(), repeating: dgc_interval, leeway: dgc_leeway)
+        dgc_timer.schedule(deadline: .now(), repeating: dgc_interval, dgc_leeway: dgc_leeway)
         // 定时器触发时执行的操作
         dgc_timer.setEventHandler {[weak self] in
             self?.dgc_soundTimerTick()
@@ -821,11 +821,11 @@ extension DGCRTCManager {
     // 同步处理，在同个队列
     private func dgc_callSyncInQueue(block :@escaping (()->Void)) {
         if DispatchQueue.getSpecific(key: dgc_queueKey) == 200 {
-//            MGLog.log("RTC---声网--dgc_callSyncInQueue--thread=\(Thread.current)")
+//            DGCLog.log("RTC---声网--dgc_callSyncInQueue--thread=\(Thread.current)")
             block()
         }else{
             dgc_queue.sync{
-//                MGLog.log("RTC---声网--dgc_callSyncInQueue----11")
+//                DGCLog.log("RTC---声网--dgc_callSyncInQueue----11")
                 block()
             }
         }

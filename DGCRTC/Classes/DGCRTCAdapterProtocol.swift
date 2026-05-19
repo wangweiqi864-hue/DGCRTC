@@ -1,8 +1,8 @@
 //
 //  DGCRTCAdapterProtocol.swift
-//  VLDLive
+//  ManGo
 //
-//  Created by Pi0007-linwieyan on 2024/3/19.
+//  Created by mango-linwieyan on 2024/3/19.
 //
 
 import Foundation

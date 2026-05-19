@@ -2,12 +2,12 @@
 //  DGCVolcengineRTCAdapter.swift
 //  Pods
 //
-//  Created by Pi0007 on 2025/9/10.
+//  Created by mango on 2024/9/10.
 //
 
 import Foundation
 import VolcEngineRTC
-import MGLog
+import DGCLog
 
 class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
     
@@ -39,14 +39,14 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         dgc_config.enableVad = false
         dgc_config.enableVoicePitch = false
         self.dgc_rtcVideo?.enableAudioPropertiesReport(dgc_config)
-        MGLog.info("RTC---火山-----------installSDK")
+        DGCLog.info("RTC---火山-----------installSDK")
         backMusicPlayer = self.dgc_rtcVideo?.getMediaPlayer(0)
         backMusicPlayer?.setEventHandler(self)
     }
     
     func refreshSDK(appID: String, appKey: String) {
         let dgc_flag = dgc_rtcRoom?.updateToken(appKey) ?? -1
-        MGLog.info("RTC---火山--刷新token==appID=\(appID)--appKey=\(appKey)--dgc_flag=\(dgc_flag)")
+        DGCLog.info("RTC---火山--刷新token==appID=\(appID)--appKey=\(appKey)--dgc_flag=\(dgc_flag)")
     }
     
     func setAudioSessionOperationRestriction(restriction: DGCAudioSessionOperationRestriction) {
@@ -54,7 +54,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
     }
     
     func enablePublish(isEnablePublish: Bool) {
-        MGLog.info("RTC---火山-isEnablePublish=\(isEnablePublish)")
+        DGCLog.info("RTC---火山-isEnablePublish=\(isEnablePublish)")
         if isEnablePublish {
             self.dgc_rtcRoom?.setUserVisibility(true) // 流可见
         }else{
@@ -165,7 +165,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         let dgc_roomId = dataSource.adapterGetCurrentRoomId()
         let dgc_userId = dataSource.adapterGetPlayerID()
         if dgc_roomId <= 0 || dgc_userId <= 0 {
-            MGLog.error("RTC---火山--SDK进房数据丢失")
+            DGCLog.error("RTC---火山--SDK进房数据丢失")
             delegate.rtcAdapterEnterRoomFailedWithResult(DGCRTCAdapterResult(msg: "进房数据异常", code: -1))
             return
         }
@@ -183,12 +183,12 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         dgc_roomCfg.isAutoSubscribeAudio = false // 改成手动订阅, 因为火山弹幕游戏原因
         dgc_roomCfg.isAutoSubscribeVideo = false
         self.dgc_rtcRoom?.setUserVisibility(false) // 设置不可以见 上麦后设置为可见
-        let dgc_result = self.dgc_rtcRoom?.joinRoom(dgc_token, userInfo: dgc_userInfo, roomConfig: dgc_roomCfg) ?? -1
+        let dgc_result = self.dgc_rtcRoom?.joinRoom(dgc_token, dgc_userInfo: dgc_userInfo, roomConfig: dgc_roomCfg) ?? -1
         if dgc_result < 0 {//进入失败
-            MGLog.debug("RTC---火山--进房失败...")
+            DGCLog.debug("RTC---火山--进房失败...")
             delegate.rtcAdapterEnterRoomFailedWithResult(nil)
         }else{
-            MGLog.info("RTC---火山--进房成功")
+            DGCLog.info("RTC---火山--进房成功")
             delegate.rtcAdapterEnterRoomSuccessedWithResult(nil,dgc_roomId)
         }
     }
@@ -196,7 +196,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
     func quitRoom(isDestroySDK: Bool) {
         let dgc_result = self.dgc_rtcRoom?.leaveRoom() ?? -1
         if dgc_result < 0 {
-            MGLog.debug("RTC---火山--退房失败")
+            DGCLog.debug("RTC---火山--退房失败")
         }
         stopPreview(isDestroySDK: isDestroySDK)
         if isDestroySDK {
@@ -218,7 +218,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         dgc_config.type = .playoutAndPublish
         dgc_config.startPos = 0
 //        dgc_config.startPos = startPos == 0 ? 1 : startPos // 注意: 火山RTC有bug, 所以穿1
-        let dgc_code = backMusicPlayer?.open(musicPath, config: dgc_config) ?? -1
+        let dgc_code = backMusicPlayer?.open(musicPath, dgc_config: dgc_config) ?? -1
         if dgc_code == 0{
             currMusicPath = musicPath
         }else{
@@ -287,7 +287,7 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
     }
     
     func stopPreview(isDestroySDK: Bool) {
-        MGLog.info("RTC---火山-stopPreview")
+        DGCLog.info("RTC---火山-stopPreview")
         dgc_rtcVideo?.stopVideoCapture()
         if isDestroySDK {
             self.dgc_userId = 0;
@@ -319,33 +319,33 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
         let dgc_roomId = dataSource.adapterGetCurrentRoomId()
         let dgc_streamKey = ByteRTCRemoteStreamKey.init()
         dgc_streamKey.dgc_userId = "\(uId)";
-        dgc_streamKey.roomId = "\(dgc_roomId)"
+        dgc_streamKey.dgc_roomId = "\(dgc_roomId)"
         dgc_streamKey.streamIndex = .indexMain
         let dgc_isFlag = self.dgc_rtcVideo?.setRemoteVideoCanvas(dgc_streamKey, withCanvas: dgc_canvas) ?? -1
-        MGLog.info("RTC---火山-setRemoteView--uId=\(uId)-dgc_roomId=\(dgc_roomId)-dgc_isFlag=\(dgc_isFlag)")
+        DGCLog.info("RTC---火山-setRemoteView--uId=\(uId)-dgc_roomId=\(dgc_roomId)-dgc_isFlag=\(dgc_isFlag)")
     }
     
     func openCameraSwitch(_ isOpen: Bool) -> Bool {
-        MGLog.info("RTC---火山-openCameraSwitch--isOpen=\(isOpen)")
+        DGCLog.info("RTC---火山-openCameraSwitch--isOpen=\(isOpen)")
         uploadLocalVideoStream()
         return true
     }
     
     func switchCamera(isFront: Bool) {
-        MGLog.info("RTC---火山-switchCamera--isFront=\(isFront)")
+        DGCLog.info("RTC---火山-switchCamera--isFront=\(isFront)")
         // {zh} 设置采集摄像头ID
         let dgc_cameraID : ByteRTCCameraID = isFront ? .front : .back
         self.dgc_rtcVideo?.switchCamera(dgc_cameraID)
     }
     
     func setLocalRenderMode(isMirror: Bool) {
-        MGLog.info("RTC---火山-setLocalRenderMode--isMirror=\(isMirror)")
+        DGCLog.info("RTC---火山-setLocalRenderMode--isMirror=\(isMirror)")
         
         dgc_rtcVideo?.setLocalVideoMirrorType(isMirror ? .renderAndEncoder : .none)
     }
     
     func enableVideo(isEnableVideo: Bool) {
-        MGLog.info("RTC---火山-isEnableVideo=\(isEnableVideo)")
+        DGCLog.info("RTC---火山-isEnableVideo=\(isEnableVideo)")
         if isEnableVideo {
             dgc_rtcRoom?.subscribeAllStreams(with: .video)
         }else{
@@ -397,29 +397,29 @@ class DGCVolcengineRTCAdapter : NSObject, DGCRTCAdapterProtocol {
 
 extension DGCVolcengineRTCAdapter : ByteRTCRoomDelegate{
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
-        MGLog.info("RTC---火山--进入房间-userInfo=\(userInfo)")
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+        DGCLog.info("RTC---火山--进入房间-userInfo=\(userInfo)")
     }
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onLeaveRoom stats: ByteRTCRoomStats) {
-        MGLog.info("RTC---火山--离开房间")
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onLeaveRoom stats: ByteRTCRoomStats) {
+        DGCLog.info("RTC---火山--离开房间")
     }
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onUserLeave uid: String, reason: ByteRTCUserOfflineReason) {
-        MGLog.info("RTC---火山--离开房间1-uid=\(uid)-reason=\(reason)")
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onUserLeave uid: String, reason: ByteRTCUserOfflineReason) {
+        DGCLog.info("RTC---火山--离开房间1-uid=\(uid)-reason=\(reason)")
     }
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
 //        ByteRTCErrorCode
-        MGLog.info("RTC---火山--房间状态-roomId=\(roomId)-uid=\(uid)-state=\(state)-extraInfo=\(extraInfo)")
+        DGCLog.info("RTC---火山--房间状态-roomId=\(roomId)-uid=\(uid)-state=\(state)-extraInfo=\(extraInfo)")
     }
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onStreamStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
-        MGLog.info("RTC---火山--流变化-roomId=\(roomId)-uid=\(uid)-state=\(state)-extraInfo=\(extraInfo)")
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onStreamStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
+        DGCLog.info("RTC---火山--流变化-roomId=\(roomId)-uid=\(uid)-state=\(state)-extraInfo=\(extraInfo)")
     }
     
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onStreamSubscribed state: ByteRTCSubscribeState, userId: String, subscribeConfig info: ByteRTCSubscribeConfig) {
-        MGLog.info("RTC---火山--流被订阅-state=\(state)-dgc_userId=\(dgc_userId)")
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onStreamSubscribed state: ByteRTCSubscribeState, dgc_userId: String, subscribeConfig info: ByteRTCSubscribeConfig) {
+        DGCLog.info("RTC---火山--流被订阅-state=\(state)-dgc_userId=\(dgc_userId)")
     }
     
 }
@@ -440,7 +440,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
 //                dgc_rtcVideoHandler.rtcEngine?(engine, onError: errorCode)
 //            }
 //        }
-        MGLog.info("RTC---火山--error=\(errorCode)")
+        DGCLog.info("RTC---火山--error=\(errorCode)")
     }
     
     func rtcEngine(_ engine: ByteRTCVideo, onLocalAudioPropertiesReport audioPropertiesInfos: [ByteRTCLocalAudioPropertiesInfo]) {
@@ -473,7 +473,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
                 }
             }
         }
-//        MGLog.info("RTC---火山--onLocalAudioPropertiesReport=")
+//        DGCLog.info("RTC---火山--onLocalAudioPropertiesReport=")
     }
     
     func rtcEngine(_ engine: ByteRTCVideo, onRemoteAudioPropertiesReport audioPropertiesInfos: [ByteRTCRemoteAudioPropertiesInfo], totalRemoteVolume: Int) {
@@ -488,7 +488,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
             if dgc_vl <= 0 {
                 continue
             }
-            let dgc_streamKey = speaker.streamKey
+            let dgc_streamKey = speaker.dgc_streamKey
             let dgc_uid = Int64(dgc_streamKey.dgc_userId ?? "") ?? 0
             //计算当前音量
             let dgc_volume = CGFloat(dgc_vl) / 255.0
@@ -503,7 +503,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
                 }
             }
         }
-//        MGLog.info("RTC---火山--onRemoteAudioPropertiesReport=")
+//        DGCLog.info("RTC---火山--onRemoteAudioPropertiesReport=")
     }
     
     func rtcEngine(_ engine: ByteRTCVideo, onWarning code: ByteRTCWarningCode) {
@@ -516,7 +516,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
     
     func rtcEngine(_ engine: ByteRTCVideo, onFirstRemoteAudioFrame key: ByteRTCRemoteStreamKey) {
         
-        MGLog.info("RTC---火山--onFirstRemoteAudioFrame======roomId:\((key.roomId ?? ""))======userId:\((key.dgc_userId ?? ""))")
+        DGCLog.info("RTC---火山--onFirstRemoteAudioFrame======roomId:\((key.roomId ?? ""))======dgc_userId:\((key.dgc_userId ?? ""))")
 //        DispatchQueue.main.async {
 //            if let dgc_rtcVideoHandler = self.mediaPlayer?.manager?.getRtcVideoHandler() {
 //                dgc_rtcVideoHandler.rtcEngine?(engine, onFirstRemoteAudioFrame: key)
@@ -525,19 +525,19 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
     }
     
     func rtcEngine(_ engine: ByteRTCVideo, onFirstRemoteVideoFrameDecoded streamKey: ByteRTCRemoteStreamKey, withFrameInfo frameInfo: ByteRTCVideoFrameInfo) {
-        MGLog.info("RTC---火山--onFirstRemoteVideoFrameDecoded======roomId:\((streamKey.roomId ?? ""))======userId:\((streamKey.dgc_userId ?? ""))")
+        DGCLog.info("RTC---火山--onFirstRemoteVideoFrameDecoded======roomId:\((streamKey.roomId ?? ""))======dgc_userId:\((streamKey.dgc_userId ?? ""))")
 //        DispatchQueue.main.async {
-//            if let dgc_mediaPlayer = self.mediaPlayer {
+//            if let dgc_mediaPlayer = self.dgc_mediaPlayer {
 //                if let dgc_rtcVideoHandler = dgc_mediaPlayer.manager?.getRtcVideoHandler() {
 //                    dgc_rtcVideoHandler.rtcEngine?(engine, onFirstRemoteVideoFrameDecoded: streamKey, withFrameInfo: frameInfo)
 //                }
-//                dgc_mediaPlayer.bindRemoteRenderView(roomId: (streamKey.roomId ?? ""), userId: (streamKey.dgc_userId ?? ""))
+//                dgc_mediaPlayer.bindRemoteRenderView(roomId: (streamKey.roomId ?? ""), dgc_userId: (streamKey.dgc_userId ?? ""))
 //            }
 //        }
     }
     
     func rtcEngine(_ engine: ByteRTCVideo, onFirstRemoteVideoFrameRendered streamKey: ByteRTCRemoteStreamKey, withFrameInfo frameInfo: ByteRTCVideoFrameInfo) {
-        MGLog.info("RTC---火山--onFirstRemoteVideoFrameRendered======roomId:\((streamKey.roomId ?? ""))======userId:\((streamKey.dgc_userId ?? ""))")
+        DGCLog.info("RTC---火山--onFirstRemoteVideoFrameRendered======roomId:\((streamKey.roomId ?? ""))======dgc_userId:\((streamKey.dgc_userId ?? ""))")
 //        DispatchQueue.main.async {
 //            if let dgc_rtcVideoHandler = self.mediaPlayer?.manager?.getRtcVideoHandler() {
 //                dgc_rtcVideoHandler.rtcEngine?(engine, onFirstRemoteVideoFrameRendered: streamKey, withFrameInfo: frameInfo)
@@ -602,9 +602,9 @@ extension DGCVolcengineRTCAdapter : ByteRTCVideoDelegate{
     }
     
     // 手动订阅音频流/视频流
-    func dgc_rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
+    func dgc_rtcRoom(_ dgc_rtcRoom: ByteRTCRoom, onUserPublishStream dgc_userId: String, type: ByteRTCMediaStreamType) {
         self.dgc_rtcRoom?.subscribeStream(dgc_userId, mediaStreamType: type)
-        MGLog.info("RTC---火山--onUserPublishStream======userId:\(dgc_userId)======type:\(type.rawValue)")
+        DGCLog.info("RTC---火山--onUserPublishStream======dgc_userId:\(dgc_userId)======type:\(type.rawValue)")
     }
 }
 
@@ -613,7 +613,7 @@ extension DGCVolcengineRTCAdapter : ByteRTCMediaPlayerEventHandler  {
     func onMediaPlayerStateChanged(_ playerId: Int32, state: ByteRTCPlayerState, error: ByteRTCPlayerError) {
         //播放结束
         if state == .stopped {
-            MGLog.debug("RTC---火山--伴奏--声网--播放结束")
+            DGCLog.debug("RTC---火山--伴奏--声网--播放结束")
             if Thread.isMainThread{
                 delegate.rtcAdapterBackMusicFinished(self.currMusicPath)
             } else {
@@ -628,10 +628,10 @@ extension DGCVolcengineRTCAdapter : ByteRTCMediaPlayerEventHandler  {
         if playerId != dgc_userId { return }
         let dgc_total = backMusicPlayer?.getTotalDuration() ?? 0
         if Thread.isMainThread{
-            delegate.rtcAdapterBackMusicPositionChanged(postion: Int(progress), total: Int(dgc_total))
+            delegate.rtcAdapterBackMusicPositionChanged(postion: Int(progress), dgc_total: Int(dgc_total))
         } else {
             DispatchQueue.main.async {
-                self.delegate.rtcAdapterBackMusicPositionChanged(postion: Int(progress), total: Int(dgc_total))
+                self.delegate.rtcAdapterBackMusicPositionChanged(postion: Int(progress), dgc_total: Int(dgc_total))
             }
         }
     }

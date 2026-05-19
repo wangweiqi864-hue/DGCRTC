@@ -1,13 +1,13 @@
 //
 //  DGCAgoraAdapter.swift
-//  VLDLive
+//  ManGo
 //
-//  Created by Pi0007-linwieyan on 2024/3/19.
+//  Created by mango-linwieyan on 2024/3/19.
 //
 
 import Foundation
 import AgoraRtcKit
-import MGLog
+import DGCLog
 
 
 public enum DGCAudioSessionOperationRestriction {
@@ -20,8 +20,8 @@ public enum DGCAudioSessionOperationRestriction {
 
 class DGCAgoraAdapter : NSObject {
     
-//    private lazy var bytesRender = BytesBeautyRender()
-//    private lazy var beautyAPI = BeautyAPI()
+//    private lazy var dgc_bytesRender = BytesBeautyRender()
+//    private lazy var dgc_beautyAPI = BeautyAPI()
 
     
     private(set) weak var dgc_agoraKit: AgoraRtcEngineKit?
@@ -145,7 +145,7 @@ class DGCAgoraAdapter : NSObject {
     // 更新角色
     /// 是否可以发布流
     func enablePublish(isEnablePublish : Bool){
-        MGLog.info("RTC---声网-isEnablePublish=\(isEnablePublish)")
+        DGCLog.info("RTC---声网-isEnablePublish=\(isEnablePublish)")
         let dgc_role : AgoraClientRole = isEnablePublish ? .broadcaster : .audience
         let dgc_options = AgoraClientRoleOptions()
         
@@ -153,13 +153,13 @@ class DGCAgoraAdapter : NSObject {
         if isEnablePublish == false, dgc_isLive {
             dgc_options.audienceLatencyLevel = .lowLatency // 低延时。
         }
-        dgc_agoraKit?.setClientRole(dgc_role, options: dgc_options)
+        dgc_agoraKit?.setClientRole(dgc_role, dgc_options: dgc_options)
         uploadLocalAudioStream()
         uploadLocalVideoStream()
         
         // 更新ext
 //        self.dgc_channelExts.forEach { (roomId,extData) in
-//            let dgc_mediaOptions = extData.options
+//            let dgc_mediaOptions = extData.dgc_options
 //            dgc_mediaOptions.clientRoleType = dgc_role
 //            if dgc_role == .broadcaster {
 //                dgc_mediaOptions.autoSubscribeVideo = true
@@ -177,14 +177,14 @@ class DGCAgoraAdapter : NSObject {
     }
     
     func enableSetBeauty(isSetBeauty: Bool) {
-        MGLog.info("RTC---声网-isSetBeauty=\(isSetBeauty)")
+        DGCLog.info("RTC---声网-isSetBeauty=\(isSetBeauty)")
         uploadLocalAudioStream()
         uploadLocalVideoStream()
     }
     
     func uploadLocalVideoStream() {
         let dgc_isEnableSetBeauty = delegate.rtcAdapterIsEnableSetBeauty()
-        MGLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnableSetBeauty=\(dgc_isEnableSetBeauty)")
+        DGCLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnableSetBeauty=\(dgc_isEnableSetBeauty)")
         if dgc_isEnableSetBeauty { // 正在设置美颜 开启本地采集
             dgc_agoraKit?.startPreview()
             dgc_agoraKit?.muteLocalVideoStream(true) // 关闭本地流
@@ -192,7 +192,7 @@ class DGCAgoraAdapter : NSObject {
         }
         
         let dgc_isEnablePublish = delegate.rtcAdapterIsEnablePublish()
-        MGLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnablePublish=\(dgc_isEnablePublish)")
+        DGCLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnablePublish=\(dgc_isEnablePublish)")
         if !dgc_isEnablePublish { // 不可用
             dgc_agoraKit?.stopPreview()
             dgc_agoraKit?.muteLocalVideoStream(true)
@@ -200,7 +200,7 @@ class DGCAgoraAdapter : NSObject {
         }
         
         let dgc_isEnableCamera = delegate.rtcAdapterIsEnableCamera()
-        MGLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnableCamera=\(dgc_isEnableCamera)")
+        DGCLog.info("RTC---声网-uploadLocalVideoStream--dgc_isEnableCamera=\(dgc_isEnableCamera)")
         if dgc_isEnableCamera {
 //            let dgc_config = AgoraCameraCapturerConfiguration()
 //            dgc_config.cameraDirection = .front
@@ -218,7 +218,7 @@ class DGCAgoraAdapter : NSObject {
         
         //麦克风是否可用  常用于在麦上的时候
         let dgc_isEnablePublish = delegate.rtcAdapterIsEnablePublish()
-        MGLog.info("RTC---声网-uploadLocalAudioStream--dgc_isEnablePublish=\(dgc_isEnablePublish)")
+        DGCLog.info("RTC---声网-uploadLocalAudioStream--dgc_isEnablePublish=\(dgc_isEnablePublish)")
         if !dgc_isEnablePublish{ //不可用
             //都停掉
             setSpeakerVolume(0)
@@ -228,7 +228,7 @@ class DGCAgoraAdapter : NSObject {
             return
         }
         let dgc_isEnableBackMusic = delegate.rtcAdapterIsEnableBackMusic()
-        MGLog.info("RTC---声网-uploadLocalAudioStream--dgc_isEnableBackMusic=\(dgc_isEnableBackMusic)")
+        DGCLog.info("RTC---声网-uploadLocalAudioStream--dgc_isEnableBackMusic=\(dgc_isEnableBackMusic)")
         if !dgc_isEnablePublish && !dgc_isEnableBackMusic{//都没开启 全部停止
             dgc_agoraKit?.muteLocalAudioStream(true)
         } else {//只要有一个开启就要 打开
@@ -254,7 +254,7 @@ class DGCAgoraAdapter : NSObject {
     
     
     func enableVideo(isEnableVideo: Bool) {
-        MGLog.info("RTC---声网-isEnableVideo=\(isEnableVideo)")
+        DGCLog.info("RTC---声网-isEnableVideo=\(isEnableVideo)")
         if isEnableVideo {
 //            dgc_agoraKit?.enableVideo()
             dgc_agoraKit?.enableLocalVideo(true)
@@ -268,10 +268,10 @@ class DGCAgoraAdapter : NSObject {
     }
     
     func enableAIAinsMode(isEnableAIAinsMode: Bool,mode:Int32) {
-        MGLog.info("RTC---声网-isEnableAIAinsMode=\(AUDIO_AINS_MODE.init(rawValue: Int(mode)) ?? .AINS_MODE_BALANCED)")
+        DGCLog.info("RTC---声网-isEnableAIAinsMode=\(AUDIO_AINS_MODE.init(rawValue: Int(mode)) ?? .AINS_MODE_BALANCED)")
         let dgc_mode4Sdk = AUDIO_AINS_MODE.init(rawValue: Int(mode)) ?? .AINS_MODE_BALANCED
         let dgc_rst = dgc_agoraKit?.setAINSMode(isEnableAIAinsMode, mode: dgc_mode4Sdk) == 0
-        MGLog.info("RTC---声网-isEnableAIAinsMode dgc_rst=" + (dgc_rst ? "success" : "fail" ))
+        DGCLog.info("RTC---声网-isEnableAIAinsMode dgc_rst=" + (dgc_rst ? "success" : "fail" ))
     }
 }
 
@@ -284,7 +284,7 @@ extension DGCAgoraAdapter {
 //    }
 
     func stopPreview(isDestroySDK : Bool = true) {
-        MGLog.info("RTC---声网-stopPreview")
+        DGCLog.info("RTC---声网-stopPreview")
         dgc_agoraKit?.stopPreview()
         if isDestroySDK {
             if dgc_agoraKit != nil {
@@ -296,21 +296,21 @@ extension DGCAgoraAdapter {
     
     //开启或关闭摄像头
     func openCameraSwitch(_ isOpen : Bool) -> Bool{
-        MGLog.info("RTC---声网-openCameraSwitch--isOpen=\(isOpen)")
+        DGCLog.info("RTC---声网-openCameraSwitch--isOpen=\(isOpen)")
         uploadLocalVideoStream()
         if isOpen { // 开启摄像头时也要设置镜像
             let dgc_isMirror = delegate.rtcAdapterIsMirror()
-            setLocalRenderMode(isMirror: dgc_isMirror)
+            setLocalRenderMode(dgc_isMirror: dgc_isMirror)
         }
         return true
     }
     
     //是否使用前置摄像头
     func switchCamera(isFront : Bool) {
-        MGLog.info("RTC---声网-switchCamera-isFront=\(isFront)")
+        DGCLog.info("RTC---声网-switchCamera-isFront=\(isFront)")
         dgc_agoraKit?.switchCamera()
         let dgc_isMirror = delegate.rtcAdapterIsMirror()
-        setLocalRenderMode(isMirror: dgc_isMirror)
+        setLocalRenderMode(dgc_isMirror: dgc_isMirror)
     }
     
     //设置美颜
@@ -326,11 +326,11 @@ extension DGCAgoraAdapter {
         //锐化程度，取值范围为 [0.0,1.0]，其中 0.0 表示原始锐度，默认值为 0.1。取值越大，锐化程度越大。
         dgc_options.sharpnessLevel = 0.1
         
-        dgc_agoraKit?.setBeautyEffectOptions(true, options: dgc_options)
+        dgc_agoraKit?.setBeautyEffectOptions(true, dgc_options: dgc_options)
     }
     
     func setLocalView(view : UIView) {
-        MGLog.info("RTC---声网-本地预览视图")
+        DGCLog.info("RTC---声网-本地预览视图")
         let dgc_videoCanvas = AgoraRtcVideoCanvas()
         dgc_videoCanvas.uid = 0
         dgc_videoCanvas.renderMode = .hidden
@@ -340,14 +340,14 @@ extension DGCAgoraAdapter {
         dgc_agoraKit?.setupLocalVideo(dgc_videoCanvas)
         
         let dgc_isMirror = delegate.rtcAdapterIsMirror()
-        setLocalRenderMode(isMirror: dgc_isMirror)
+        setLocalRenderMode(dgc_isMirror: dgc_isMirror)
     }
     
     
     func setRemoteView(view: UIView, uId: Int64) {
         let dgc_videoCanvas = AgoraRtcVideoCanvas()
         let dgc_tId = uId
-        MGLog.info("RTC---声网--启动-远端预览视图dgc_tId=\(dgc_tId)")
+        DGCLog.info("RTC---声网--启动-远端预览视图tId=\(dgc_tId)")
         dgc_videoCanvas.uid = UInt(dgc_tId)
         dgc_videoCanvas.renderMode = .hidden
         dgc_videoCanvas.view = view
@@ -355,7 +355,7 @@ extension DGCAgoraAdapter {
     }
     
     func setLocalRenderMode(isMirror : Bool){
-        MGLog.info("RTC---声网-setLocalRenderMode--isMirror=\(isMirror)")
+        DGCLog.info("RTC---声网-setLocalRenderMode--isMirror=\(isMirror)")
         
         let dgc_isCameraFront = delegate.rtcAdapterIsCameraFront()
         if dgc_isCameraFront {//前置摄像头
@@ -376,7 +376,7 @@ extension DGCAgoraAdapter {
         if config.size == .zero ||  config.size == dgc_videoConfig.dimensions {
             return
         }
-        MGLog.info("RTC---声网--EncodeConfig=\(config)")
+        DGCLog.info("RTC---声网--EncodeConfig=\(config)")
         dgc_videoConfig.dimensions = config.size
         dgc_agoraKit?.setVideoEncoderConfiguration(dgc_videoConfig)
     }
@@ -390,19 +390,19 @@ extension DGCAgoraAdapter : AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int){
-        MGLog.info("RTC---声网--didJoinedOfUid-\(uid)")
+        DGCLog.info("RTC---声网--didJoinedOfUid-\(uid)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, tokenPrivilegeWillExpire token: String) {
-        MGLog.info("RTC---声网--tokenPrivilegeWillExpire")
+        DGCLog.info("RTC---声网--tokenPrivilegeWillExpire")
     }
 
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionChangedTo state: AgoraConnectionState, reason: AgoraConnectionChangedReason) {
-        MGLog.info("RTC---声网--连接状态改变 to === \(state.rawValue) + (\(reason)) " )
+        DGCLog.info("RTC---声网--连接状态改变 to === \(state.rawValue) + (\(reason)) " )
     }
 
     func rtcEngineRequestToken(_ engine: AgoraRtcEngineKit) {
-        MGLog.info("RTC---声网--rtcEngineRequestToken")
+        DGCLog.info("RTC---声网--rtcEngineRequestToken")
     }
     
     func rtcEngineConnectionDidLost(_ engine: AgoraRtcEngineKit) {
@@ -411,55 +411,55 @@ extension DGCAgoraAdapter : AgoraRtcEngineDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioMuted muted: Bool, byUid uid: UInt) {
-        MGLog.info("RTC---声网--声音回调 didAudioMuted = muted=\(muted),uid=\(uid)")
+        DGCLog.info("RTC---声网--声音回调 didAudioMuted = muted=\(muted),uid=\(uid)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStats stats: AgoraRtcRemoteVideoStats) {
-//        MGLog.info("RTC---声网--远端视频流--uid=\(stats.uid)")
+//        DGCLog.info("RTC---声网--远端视频流--uid=\(stats.uid)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt, state: AgoraVideoRemoteState, reason: AgoraVideoRemoteReason, elapsed: Int) {
-//        MGLog.info("RTC---声网--远端视频流--uid=\(uid)-state=\(state)")
+//        DGCLog.info("RTC---声网--远端视频流--uid=\(uid)-state=\(state)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioPublishStateChange channelId: String, oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int32) {
-        MGLog.info("RTC---声网--本地音频流--channelId=\(channelId)-oldState=\(oldState)-newState=\(newState)-elapseSinceLastState=\(elapseSinceLastState)")
+        DGCLog.info("RTC---声网--本地音频流--channelId=\(channelId)-oldState=\(oldState)-newState=\(newState)-elapseSinceLastState=\(elapseSinceLastState)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoPublishStateChange channelId: String, sourceType: AgoraVideoSourceType, oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int32) {
-        MGLog.info("RTC---声网--本地视频流--channelId=\(channelId)-sourceType=\(sourceType)-oldState=\(oldState)-newState=\(newState)-elapseSinceLastState=\(elapseSinceLastState)")
+        DGCLog.info("RTC---声网--本地视频流--channelId=\(channelId)-sourceType=\(sourceType)-oldState=\(oldState)-newState=\(newState)-elapseSinceLastState=\(elapseSinceLastState)")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteVideoFrameOfUid uid: UInt, size: CGSize, elapsed: Int) {
-        MGLog.info("RTC---声网--远端--firstFrame--uid=\(uid)-size=\(size)-elapsed=\(elapsed)")
+        DGCLog.info("RTC---声网--远端--firstFrame--uid=\(uid)-size=\(size)-elapsed=\(elapsed)")
         dgc_callShowFirstFrame(uId: Int64(uid))
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalVideoFrameWith size: CGSize, elapsed: Int, sourceType: AgoraVideoSourceType) {
-        MGLog.info("RTC---声网--本地--firstFrame--uid=0-size=\(size)-elapsed=\(elapsed)")
+        DGCLog.info("RTC---声网--本地--firstFrame--uid=0-size=\(size)-elapsed=\(elapsed)")
         dgc_callShowFirstFrame(uId: 0)
     }
     
 //    func rtcEngine(_ engine: AgoraRtcEngineKit, localVideoStateChangedOf state: AgoraVideoLocalState, error: AgoraLocalVideoStreamError, sourceType: AgoraVideoSourceType) {
-//        MGLog.info("RTC---声网--本地视频流111--state=\(state)-error=\(error)-sourceType=\(sourceType)")
+//        DGCLog.info("RTC---声网--本地视频流111--state=\(state)-error=\(error)-sourceType=\(sourceType)")
 //    }
 //
 //    func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoEnabled enabled: Bool, byUid uid: UInt) {
-//        MGLog.info("RTC---声网--本地视频流222--didVideoEnabled=\(enabled)-uid=\(uid)")
+//        DGCLog.info("RTC---声网--本地视频流222--didVideoEnabled=\(enabled)-uid=\(uid)")
 //    }
     
     
 //    func rtcEngine(_ engine: AgoraRtcEngineKit, localVideoStats stats: AgoraRtcLocalVideoStats, sourceType: AgoraVideoSourceType) {
-//        MGLog.info("RTC---声网--本地视频流333--localVideoStats=\(stats)-sourceType=\(sourceType)")
+//        DGCLog.info("RTC---声网--本地视频流333--localVideoStats=\(stats)-sourceType=\(sourceType)")
 //    }
     
     //声音时时回调 主要用于光圈
     func rtcEngine(_ engine: AgoraRtcEngineKit, reportAudioVolumeIndicationOfSpeakers speakers: [AgoraRtcAudioVolumeInfo], totalVolume: Int) {
         
         for speaker in speakers {
-            let dgc_uid = speaker.uid
+            let dgc_uid = speaker.dgc_uid
             //计算当前音量
-            let dgc_volume : CGFloat = CGFloat(speaker.volume) / 255.0 //* 100.0
+            let dgc_volume : CGFloat = CGFloat(speaker.dgc_volume) / 255.0 //* 100.0
             
             //回调 说话状态
             if Thread.isMainThread{
@@ -476,16 +476,16 @@ extension DGCAgoraAdapter : AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, audioMixingPositionChanged position: Int) {
         let dgc_total = engine.getAudioMixingDuration()
         if Thread.isMainThread{
-            delegate.rtcAdapterBackMusicPositionChanged(postion: position, total: Int(dgc_total))
+            delegate.rtcAdapterBackMusicPositionChanged(postion: position, dgc_total: Int(dgc_total))
         } else {
             DispatchQueue.main.async {
-                self.delegate.rtcAdapterBackMusicPositionChanged(postion: position, total: Int(dgc_total))
+                self.delegate.rtcAdapterBackMusicPositionChanged(postion: position, dgc_total: Int(dgc_total))
             }
         }
     }
     
     func rtcEngineLocalAudioMixingDidFinish(_ engine: AgoraRtcEngineKit) {
-        MGLog.debug("RTC---声网--伴奏--声网--播放结束")
+        DGCLog.debug("RTC---声网--伴奏--声网--播放结束")
         if Thread.isMainThread{
             delegate.rtcAdapterBackMusicFinished(nil)
         } else {
@@ -511,7 +511,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
     
 
     func setupSDK(appID: String, appKey: String) {
-        MGLog.info("RTC---声网--初始化sdk")
+        DGCLog.info("RTC---声网--初始化sdk")
         if dgc_agoraKit != nil{
             AgoraRtcEngineKit.destroy()
         }
@@ -523,7 +523,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
         //线上 开启日志级别Info 平常debug是error
         dgc_logConfig.level = dgc_rtcConfig.isOnline ? AgoraLogLevel.info : AgoraLogLevel.error
         // 设置 log 的文件路径
-        var dgc_logDir = dgc_rtcConfig.logDir
+        var dgc_logDir = dgc_rtcConfig.dgc_logDir
         if dgc_logDir.isEmpty {
             dgc_logDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
         }
@@ -531,7 +531,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
  
         let dgc_config = AgoraRtcEngineConfig()
         dgc_config.appId = appID
-        dgc_config.logConfig = dgc_logConfig
+        dgc_config.dgc_logConfig = dgc_logConfig
         dgc_agoraKit = AgoraRtcEngineKit.sharedEngine(with: dgc_config, delegate: self)
         dgc_agoraKit?.enableAudioVolumeIndication(1000, smooth: 3, reportVad: false)
 
@@ -542,7 +542,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
     
     func refreshSDK(appID: String, appKey: String) {
         let dgc_flag = dgc_agoraKit?.renewToken(appKey) ?? -1
-        MGLog.info("RTC---声网--刷新token==appID=\(appID)--appKey=\(appKey)--dgc_flag=\(dgc_flag)")
+        DGCLog.info("RTC---声网--刷新token==appID=\(appID)--appKey=\(appKey)--dgc_flag=\(dgc_flag)")
     }
     
     // 设置sdk对 Audio Session 操作权限
@@ -587,7 +587,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
         if isOpen {
             let dgc_s = dgc_agoraKit?.setAudioEffectPreset(AgoraAudioEffectPreset.voiceChangerEffectPigKin)
             
-            MGLog.info("RTC---声网-setAudioEffectPreset rst=" + (dgc_s ?? -1 < 0 ? "fail" : "success" ))
+            DGCLog.info("RTC---声网-setAudioEffectPreset rst=" + (dgc_s ?? -1 < 0 ? "fail" : "success" ))
         }
     }
     
@@ -628,22 +628,22 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
         let dgc_token = dataSource.adapterNewToken()
         let dgc_roomId = dataSource.adapterGetCurrentRoomId()
         let dgc_userId = dataSource.adapterGetPlayerID()
-        let dgc_agoMode = dataSource.agoMode()
-        let dgc_isClosed4AINoisereduction = dataSource.isClosed4AINoisereduction()
+        let dgc_agoMode = dataSource.dgc_agoMode()
+        let dgc_isClosed4AINoisereduction = dataSource.dgc_isClosed4AINoisereduction()
         if dgc_roomId <= 0 || dgc_userId <= 0 {
-            MGLog.info("RTC---声网--SDK进房数据丢失")
+            DGCLog.info("RTC---声网--SDK进房数据丢失")
             delegate.rtcAdapterEnterRoomFailedWithResult(DGCRTCAdapterResult(msg: "进房数据异常", code: -1))
             return
         }
         
         let dgc_result = dgc_agoraKit?.joinChannel(byToken: dgc_token, channelId: "\(dgc_roomId)", info: "XHXLive", uid: UInt(dgc_userId)) {[weak self] channel, rUid, elapsed in
-            MGLog.info("RTC---声网--进房成功")
+            DGCLog.info("RTC---声网--进房成功")
             
             self?.delegate.rtcAdapterEnterRoomSuccessedWithResult(nil,dgc_roomId)
             self?.enableAIAinsMode(isEnableAIAinsMode: !dgc_isClosed4AINoisereduction, mode: dgc_agoMode)
         } ?? -1
         if dgc_result < 0 {//进入失败
-            MGLog.info("RTC---声网--进房失败...")
+            DGCLog.info("RTC---声网--进房失败...")
             delegate.rtcAdapterEnterRoomFailedWithResult(nil)
         }
     }
@@ -651,10 +651,10 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
     
     func quitRoom(isDestroySDK : Bool) {
         let dgc_result = self.dgc_agoraKit?.leaveChannel { stats in
-            MGLog.info("RTC---声网--退房成功")
+            DGCLog.info("RTC---声网--退房成功")
         } ?? -1
         if dgc_result < 0 {
-            MGLog.info("RTC---声网--退房失败")
+            DGCLog.info("RTC---声网--退房失败")
         }
         stopPreview(isDestroySDK: isDestroySDK)
         if isDestroySDK {
@@ -670,12 +670,12 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
     // token 新频道的token
     func joinChannelExt(roomId: Int64, token: String) {
         if dgc_channelExts[roomId] != nil {
-            MGLog.error("RTC---声网--ChannelExt--已加入了该频道--\(roomId)")
+            DGCLog.error("RTC---声网--ChannelExt--已加入了该频道--\(roomId)")
             return
         }
         let dgc_userId = dataSource.adapterGetPlayerID()
         if roomId <= 0 || dgc_userId <= 0 || token.isEmpty {
-            MGLog.error("RTC---声网--ChannelExt失败--join--roomId=\(roomId)--dgc_userId=\(dgc_userId)--token=\(token)")
+            DGCLog.error("RTC---声网--ChannelExt失败--join--roomId=\(roomId)--dgc_userId=\(dgc_userId)--token=\(token)")
             return
         }
         // 如果有已经加入了 先退出
@@ -696,36 +696,36 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
 //        dgc_mediaOptions.clientRoleType = dgc_role
         dgc_mediaOptions.clientRoleType = .audience
         
-        let dgc_connection = dgc_extData.connection
+        let dgc_connection = dgc_extData.dgc_connection
         dgc_connection.channelId = "\(roomId)"
         dgc_connection.localUid = UInt(dgc_userId*1000)
 
         self.dgc_channelExts[roomId] = dgc_extData
         
-        MGLog.debug("RTC---声网--ChannelExt--join--开始--roomId=\(roomId)--localUid=\(dgc_connection.localUid)--token=\(token)")
+        DGCLog.debug("RTC---声网--ChannelExt--join--开始--roomId=\(roomId)--localUid=\(dgc_connection.localUid)--token=\(token)")
         
-        let dgc_result = dgc_agoraKit?.joinChannelEx(byToken: token, connection: dgc_connection, delegate: dgc_channelExtDelegate, mediaOptions: dgc_mediaOptions, joinSuccess: {[weak self] channel, rUid, elapsed in
-            MGLog.debug("RTC---声网--ChannelExt--join成功")
+        let dgc_result = dgc_agoraKit?.joinChannelEx(byToken: token, dgc_connection: dgc_connection, delegate: dgc_channelExtDelegate, dgc_mediaOptions: dgc_mediaOptions, joinSuccess: {[weak self] channel, rUid, elapsed in
+            DGCLog.debug("RTC---声网--ChannelExt--join成功")
             self?.delegate.rtcAdapterEnterRoomSuccessedWithResult(nil,roomId)
         }) ?? -1
         if dgc_result < 0 {//进入失败
-            MGLog.debug("RTC---声网--ChannelExt---join失败--dgc_result=\(dgc_result)")
+            DGCLog.debug("RTC---声网--ChannelExt---join失败--dgc_result=\(dgc_result)")
         }
         // 开启声音回调
-        dgc_agoraKit?.enableAudioVolumeIndicationEx(1000, smooth: 3, reportVad: false, connection: dgc_connection)
+        dgc_agoraKit?.enableAudioVolumeIndicationEx(1000, smooth: 3, reportVad: false, dgc_connection: dgc_connection)
     }
     
     // 退出多频道
     func leaveChannelExt(roomId : Int64) {
         guard let dgc_extData = self.dgc_channelExts[roomId] else { return }
         let dgc_result = dgc_agoraKit?.leaveChannelEx(dgc_extData.connection, leaveChannelBlock: { stats in
-            MGLog.debug("RTC---声网--ChannelExt--leave--success")
+            DGCLog.debug("RTC---声网--ChannelExt--leave--success")
         }) ?? -1
         
         self.dgc_channelExts[roomId] = nil
         
         if dgc_result < 0 {
-            MGLog.debug("RTC---声网--ChannelExt--leave--fail-dgc_result==\(dgc_result)")
+            DGCLog.debug("RTC---声网--ChannelExt--leave--fail-dgc_result==\(dgc_result)")
         }
     }
     
@@ -744,7 +744,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
         if dgc_extData.isMute == isMute {
             return
         }
-        MGLog.debug("RTC---声网--静音频道--isMute=\(isMute)--roomId=\(roomId)-\(dgc_extData.connection)")
+        DGCLog.debug("RTC---声网--静音频道--isMute=\(isMute)--roomId=\(roomId)-\(dgc_extData.connection)")
         let dgc_result = dgc_agoraKit?.muteAllRemoteAudioStreamsEx(isMute, connection: dgc_extData.connection)
         if dgc_result == 0 {
             dgc_extData.isMute = isMute
@@ -760,7 +760,7 @@ extension DGCAgoraAdapter : DGCRTCAdapterProtocol {
         dgc_videoCanvas.renderMode = .hidden
         dgc_videoCanvas.view = view
         let dgc_code = dgc_agoraKit?.setupRemoteVideoEx(dgc_videoCanvas, connection: dgc_extData.connection) ?? -999
-        MGLog.info("RTC---声网--ChannelExt-远端预览视图dgc_tId=\(dgc_tId)==\(roomId)====code:\(dgc_code)")
+        DGCLog.info("RTC---声网--ChannelExt-远端预览视图tId=\(dgc_tId)==\(roomId)====dgc_code:\(dgc_code)")
     }
 }
 
@@ -771,16 +771,16 @@ extension DGCAgoraAdapter : AgoraVideoFrameDelegate{
         if dgc_effectService.isCanUse == false { // 不启用
             return true
         }
-        guard let dgc_pixelBuffer = videoFrame.pixelBuffer else { return true }
-//        beautyAPI.onFrame(dgc_pixelBuffer) { dgc_pixelBuffer in
-//            videoFrame.pixelBuffer = dgc_pixelBuffer
+        guard let dgc_pixelBuffer = videoFrame.dgc_pixelBuffer else { return true }
+//        dgc_beautyAPI.onFrame(dgc_pixelBuffer) { dgc_pixelBuffer in
+//            videoFrame.dgc_pixelBuffer = dgc_pixelBuffer
 //        }
-        let dgc_rotation = videoFrame.rotation;
+        let dgc_rotation = videoFrame.dgc_rotation;
         let dgc_timeStamp = Double(videoFrame.renderTimeMs);
         
-        let dgc_newPixelBuffer = dgc_effectService.process(with: dgc_pixelBuffer, rotation: dgc_rotation, timeStamp: dgc_timeStamp)
+        let dgc_newPixelBuffer = dgc_effectService.process(with: dgc_pixelBuffer, dgc_rotation: dgc_rotation, dgc_timeStamp: dgc_timeStamp)
         
-        videoFrame.pixelBuffer = dgc_newPixelBuffer.takeUnretainedValue()
+        videoFrame.dgc_pixelBuffer = dgc_newPixelBuffer.takeUnretainedValue()
         
         return true
     }

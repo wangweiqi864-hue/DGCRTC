@@ -8,29 +8,29 @@
 
 + (EAGLContext *)createContextWithDefaultAPI:(EAGLRenderingAPI)api {
     while (api != 0) {
-        EAGLContext *dgc_context = [[EAGLContext alloc] initWithAPI:api];
-        if (dgc_context != nil) {
-            return dgc_context;
+        EAGLContext *context = [[EAGLContext alloc] initWithAPI:api];
+        if (context != nil) {
+            return context;
         }
-        NSLog(@"not support api %lu, use lower api %lu", (unsigned long)api, [self dgc_lowerAPI:api]);
-        api = [self dgc_lowerAPI:api];
+        NSLog(@"not support api %lu, use lower api %lu", (unsigned long)api, [self be_lowerAPI:api]);
+        api = [self be_lowerAPI:api];
     }
     return nil;
 }
 
 + (EAGLContext *)createContextWithDefaultAPI:(EAGLRenderingAPI)api sharegroup:(EAGLSharegroup *)sharegroup {
     while (api != 0) {
-        EAGLContext *dgc_context = [[EAGLContext alloc] initWithAPI:api sharegroup:sharegroup];
-        if (dgc_context != nil) {
-            return dgc_context;
+        EAGLContext *context = [[EAGLContext alloc] initWithAPI:api sharegroup:sharegroup];
+        if (context != nil) {
+            return context;
         }
-        NSLog(@"not support api %lu, use lower api %lu", (unsigned long)api, [self dgc_lowerAPI:api]);
-        api = [self dgc_lowerAPI:api];
+        NSLog(@"not support api %lu, use lower api %lu", (unsigned long)api, [self be_lowerAPI:api]);
+        api = [self be_lowerAPI:api];
     }
     return nil;
 }
 
-+ (EAGLRenderingAPI)dgc_lowerAPI:(EAGLRenderingAPI)api {
++ (EAGLRenderingAPI)be_lowerAPI:(EAGLRenderingAPI)api {
     switch (api) {
         case kEAGLRenderingAPIOpenGLES3:
             return kEAGLRenderingAPIOpenGLES2;
